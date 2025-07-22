@@ -655,18 +655,6 @@ public class EmplyeeManagement {
                         }
                     }
                 }
-
-//                if (idx != -1) {  // Chỉ xử lý khi tìm thấy "languages:"
-//                    String langs = line.substring(idx + "languages:".length()).trim();
-//                    String[] tokens = langs.split(",");
-//                    for (String token : tokens) {
-//                        if (token.trim().equalsIgnoreCase(lang)) {
-//                            System.out.println(line);
-//                            found = true;
-//                            break;
-//                        }
-//                    }
-//                }
             }
         } catch (IOException e) {
             System.out.println("Error reading text file: " + e.getMessage());
