@@ -1,3 +1,11 @@
-public interface Salary {
-    public double getSalaryForIT(); //Dùng đề sort lương cho dân IT
+
+/**
+ *
+ * @author Trong_DEV
+ */
+import java.io.Serializable;
+
+public interface Salary extends Serializable {
+
+    double getSalaryForIT();
 }
