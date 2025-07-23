@@ -1,4 +1,2 @@
 # Employee-management
-Bài assignment cuối kì
-
-Still update...
+Bài assignment cuối kì 2 PRO192 FPT
