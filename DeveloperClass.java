@@ -1,10 +1,12 @@
-
+/**
+ *
+ * @author Trong_DEV
+ */
 public class DeveloperClass extends Employee implements Salary {
 
-    protected String teamName;
-    protected String programmingLanguages;
-    protected int expYear;
-    protected double finalSal;
+    private String teamName;
+    private String programmingLanguages;
+    private int expYear;
 
     public DeveloperClass(String empID, String empName, double baseSAl, String teamName, String programmingLanguages, int expYear) {
         super(empID, empName, baseSAl);
@@ -13,55 +15,37 @@ public class DeveloperClass extends Employee implements Salary {
         this.expYear = expYear;
     }
 
-    public DeveloperClass(String empID, String empName, double baseSAl,
-            double finalSal, String teamName, String programmingLanguages, int expYear) {
-        super(empID, empName, baseSAl);
-        this.finalSal = finalSal;
-        this.teamName = teamName.trim().toLowerCase();
-        this.programmingLanguages = programmingLanguages;
-        this.expYear = expYear;
-        this.finalSal = getSalaryForIT();
-    }
-
     public String getTeamName() {
         return teamName;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName.trim().toLowerCase();
+    public void setTeamName(String name) {
+        this.teamName = name;
     }
 
     public String getProgrammingLanguages() {
         return programmingLanguages;
     }
 
-    public void setProgrammingLanguages(String programmingLanguages) {
-        this.programmingLanguages = programmingLanguages;
+    public void setProgrammingLanguages(String pl) {
+        this.programmingLanguages = pl;
     }
 
     public int getExpYear() {
         return expYear;
     }
 
-    public void setExpYear(int expYear) {
-        this.expYear = expYear;
+    public void setExpYear(int exp) {
+        this.expYear = exp;
     }
 
+    @Override
     public double getSalaryForIT() {
-        if (expYear > 10) {
-            return baseSAl + expYear * 2000000;
-        } else if (expYear > 3) {
-            return baseSAl + expYear * 1000000;
-        } else {
-            return baseSAl;
-        }
+        return getBaseSAl() + expYear * 100;
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", Team: " + teamName
-                + ", Languages: " + programmingLanguages
-                + ", Experience: " + expYear + " years"
-                + ", Final Salary: " + finalSal;
+        return super.toString() + ", Team:" + teamName + ", Languages:" + programmingLanguages + ", ExpYear:" + expYear;
     }
 }
