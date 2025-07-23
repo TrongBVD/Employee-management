@@ -1,37 +1,33 @@
 
-public class TeamLeaderClass extends DeveloperClass implements Salary {
+/**
+ *
+ * @author Trong_DEV
+ */
+public class TeamLeaderClass extends DeveloperClass {
 
     private double bonusRate;
-    protected double finalSal;
 
     public TeamLeaderClass(String empID, String empName, double baseSAl, String teamName, String programmingLanguages, int expYear, double bonusRate) {
         super(empID, empName, baseSAl, teamName, programmingLanguages, expYear);
         this.bonusRate = bonusRate;
     }
 
-    public TeamLeaderClass(String empID, String empName, double baseSAl, double finalSal, String teamName, String programmingLanguages, int expYear) {
-        super(empID, empName, baseSAl, teamName, programmingLanguages, expYear);
-        this.bonusRate = bonusRate;
-        this.finalSal = getSalaryForIT();
-    }
-
     public double getBonusRate() {
         return bonusRate;
     }
 
-    public void setBonusRate(double bonusRate) {
-        this.bonusRate = bonusRate;
+    public void setBonusRate(double br) {
+        this.bonusRate = br;
     }
 
     @Override
     public double getSalaryForIT() {
-        double devSalary = super.getSalaryForIT();
-        return devSalary + devSalary * bonusRate;
+        // Lương leader = lương dev + thưởng
+        return super.getSalaryForIT() * bonusRate;
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", Leader Bonus Rate: " + bonusRate
-                + ", Final Salary: " + finalSal;
+        return super.toString() + ", LeaderBonus:" + bonusRate;
     }
 }
