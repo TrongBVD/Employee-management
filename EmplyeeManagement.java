@@ -1,8 +1,11 @@
 
+/**
+ *
+ * @author Trong_DEV
+ */
 import java.io.*;
 import java.util.*;
 import java.nio.charset.StandardCharsets;
-//Chưa thể sort tiền thành công
 
 public class EmplyeeManagement {
 
@@ -88,17 +91,14 @@ public class EmplyeeManagement {
 
         System.out.println("Building data structure (no data input here).");
 
-        // Tạo danh sách các nhân viên (kiểu Employee nhưng thực tế là các class con implement Salary)
         List<Employee> testList = Arrays.asList(
-                new DeveloperClass("dev01", "Dev A", 1000, "java", "Java", 5),
-                new TesterClass("test01", "Test B", 900, 0.1, "Manual"),
-                new TeamLeaderClass("lead01", "Lead C", 1500, "java", "Java", 8, 0.2)
+                new DeveloperClass("dev01", "Dev A", 1000, "JavaTeam", "Java", 5),
+                new TesterClass("test01", "Test B", 900, 1.1, "Manual"),
+                new TeamLeaderClass("lead01", "Lead C", 1500, "JavaTeam", "Java", 8, 1.2)
         );
 
         for (Employee emp : testList) {
             System.out.print(emp.toString());
-
-            // Kiểm tra xem emp có implement Salary không
             if (emp instanceof Salary) {
                 double salary = ((Salary) emp).getSalaryForIT();
                 System.out.println(" | Salary: " + salary);
@@ -116,7 +116,6 @@ public class EmplyeeManagement {
         for (String lang : langs) {
             lang = lang.trim();
             if (!lang.isEmpty()) {
-                // Viết hoa chữ cái đầu, giữ nguyên các ký tự sau
                 result.add(lang.substring(0, 1).toUpperCase() + lang.substring(1));
             }
         }
@@ -124,24 +123,20 @@ public class EmplyeeManagement {
     }
 
     protected static void addEmployee() {
-        Employee emp = null;
-
         System.out.println("Add Employee:");
         System.out.println("1. Add Developer");
         System.out.println("2. Add Tester");
         System.out.println("3. Add Team Leader");
         System.out.print("Your choice: ");
         String choice = sc.nextLine();
-        //Thêm ID, tên, Base Sal
         String empID = getUniqueID();
         if (empID == null) {
             return;
         }
-
         System.out.print("Enter name: ");
         String empName = sc.nextLine();
-
         double baseSal = getPositiveDouble("Enter base salary: ");
+
         switch (choice) {
             case "1":
                 addDev(empID, empName, baseSal);
@@ -154,10 +149,6 @@ public class EmplyeeManagement {
                 break;
             default:
                 System.out.println("Invalid choice!");
-        }
-        if (emp instanceof Salary) {
-            emp = new Employee(empName, empName, baseSal) {
-            };
         }
     }
 
@@ -228,27 +219,19 @@ public class EmplyeeManagement {
     private static void addDev(String empID, String empName, double baseSal) {
         System.out.print("Enter team name: ");
         String teamName = sc.nextLine();
-
         System.out.print("Enter programming languages (comma-separated): ");
         String programmingLanguages = normalizeLanguages(sc.nextLine());
-
         int expYear = getPositiveInt("Enter years of experience: ");
-
-        DeveloperClass de = new DeveloperClass(empID, empName, baseSal, teamName, programmingLanguages, expYear);
-        double finalSal = de.getSalaryForIT();
-        DeveloperClass dev = new DeveloperClass(empID, empName, baseSal, finalSal, teamName, programmingLanguages, expYear);
-        // finalSal đã được tính trong constructor
+        DeveloperClass dev = new DeveloperClass(empID, empName, baseSal, teamName, programmingLanguages, expYear);
         employeeList.add(dev);
         empIDSet.add(empID);
         System.out.println("Developer added successfully!");
     }
 
     private static void addTester(String empID, String empName, double baseSal) {
-        double bonus = getDoubleInRange("Enter bonus rate (Higher than 1): ", 1, Double.MAX_VALUE);
-
+        double bonus = getDoubleInRange("Enter bonus rate (>= 1): ", 1, Double.MAX_VALUE);
         System.out.print("Enter tester type (Manual/Automation): ");
         String testerType = sc.nextLine();
-
         TesterClass tester = new TesterClass(empID, empName, baseSal, bonus, testerType);
         employeeList.add(tester);
         empIDSet.add(empID);
@@ -258,19 +241,14 @@ public class EmplyeeManagement {
     private static void addLead(String empID, String empName, double baseSal) {
         System.out.print("Enter team name: ");
         String teamName = sc.nextLine().trim().toLowerCase();
-
         if (teamLeaderMap.containsKey(teamName)) {
             System.out.println("This team already has a leader. Only one leader per team is allowed.");
             return;
         }
-
         System.out.print("Enter programming languages (comma-separated): ");
         String programmingLanguages = normalizeLanguages(sc.nextLine());
-
         int expYear = getPositiveInt("Enter years of experience: ");
-
-        double bonusRate = getDoubleInRange("Enter bonus rate (Higher than 1): ", 1, Double.MAX_VALUE);
-
+        double bonusRate = getDoubleInRange("Enter bonus rate (>= 1): ", 1, Double.MAX_VALUE);
         TeamLeaderClass lead = new TeamLeaderClass(empID, empName, baseSal, teamName, programmingLanguages, expYear, bonusRate);
         employeeList.add(lead);
         empIDSet.add(empID);
@@ -284,11 +262,12 @@ public class EmplyeeManagement {
             return;
         }
         System.out.println("=== Employee List ===");
-
         for (Employee employee : employeeList) {
-            if (employee instanceof Salary) {
-                System.out.println(employee.toString() + ", Salary: " + ((Salary) employee).getSalaryForIT());
-            }
+            String type = employee.getClass().getSimpleName().replace("Class", "");
+            String salaryStr = (employee instanceof Salary)
+                    ? ", Salary: " + ((Salary) employee).getSalaryForIT()
+                    : "";
+            System.out.println("[" + type + "] " + employee + salaryStr);
         }
     }
 
@@ -419,7 +398,7 @@ public class EmplyeeManagement {
         System.out.println("\nSearch Employee menu:");
         System.out.println("1. By ID");
         System.out.println("2. By name");
-        System.out.println("3. By tester with highest salary");
+        System.out.println("3. By salary (descending, from file)");
         System.out.println("4. By programming languages");
         System.out.print("Choose search option: ");
 
@@ -449,7 +428,6 @@ public class EmplyeeManagement {
             System.out.println("No ID entered.");
             return;
         }
-        String[] searchID = id.split("//w+");
         boolean found = false;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 new FileInputStream("src/Employees.txt"), StandardCharsets.UTF_8))) {
@@ -471,26 +449,17 @@ public class EmplyeeManagement {
 
                 IDPart = IDPart.trim();
 
-                boolean allWordsMatch = true;
-                for (String word : searchID) {
-                    if (!IDPart.contains(word)) {
-                        allWordsMatch = false;
-                        break;
-                    }
-                }
-
-                if (allWordsMatch) {
+                if (IDPart.contains(id)) {
                     System.out.println(line);
                     found = true;
                 }
-
             }
         } catch (IOException e) {
             System.out.println("Error reading text file: " + e.getMessage());
             return;
         }
         if (!found) {
-            System.out.println("No matching name found.");
+            System.out.println("No matching ID found.");
         }
     }
 
@@ -503,8 +472,6 @@ public class EmplyeeManagement {
             System.out.println("No name entered.");
             return;
         }
-
-        // Tách input thành các từ, bỏ khoảng trắng thừa
         String[] searchWords = input.split("\\s+");
         boolean found = false;
 
@@ -516,26 +483,20 @@ public class EmplyeeManagement {
             String line;
             while ((line = reader.readLine()) != null) {
                 String lower = line.toLowerCase();
-
-                // Tìm vị trí "name:" (không phân biệt hoa thường)
                 int idxName = lower.indexOf("name:");
                 if (idxName == -1) {
                     continue;
                 }
-
-                // Xác định vùng chứa tên: sau "name:" và trước dấu ","
                 int start = idxName + "name:".length();
                 int end = lower.indexOf(',', start);
                 String namePart;
                 if (end != -1) {
                     namePart = lower.substring(start, end);
                 } else {
-                    // Trường hợp dòng không có dấu phẩy sau Name:
                     namePart = lower.substring(start);
                 }
                 namePart = namePart.trim();
 
-                // Kiểm tra từng từ tìm kiếm có nằm trong namePart hay không
                 boolean allMatch = true;
                 for (String w : searchWords) {
                     if (!namePart.contains(w)) {
@@ -569,29 +530,21 @@ public class EmplyeeManagement {
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
 
-                // Extract salary from the line
-                // Assuming the line contains ", Salary: <number>" or "Salary: <number>" somewhere
                 double salary = 0;
                 int idx = line.toLowerCase().indexOf("salary:");
                 if (idx != -1) {
                     int start = idx + "salary:".length();
-                    // Extract number after "salary:"
                     String salaryPart = line.substring(start).trim();
-
-                    // Salary might be followed by comma or end of line
                     int endIdx = salaryPart.indexOf(',');
                     if (endIdx != -1) {
                         salaryPart = salaryPart.substring(0, endIdx).trim();
                     }
-
                     try {
                         salary = Double.parseDouble(salaryPart);
                     } catch (NumberFormatException e) {
-                        salary = 0; // If parsing fails, treat as 0
+                        salary = 0;
                     }
                 }
-
-                // Store line and parsed salary
                 records.add(new EmployeeSalaryRecord(line, salary));
             }
         } catch (IOException e) {
@@ -604,7 +557,6 @@ public class EmplyeeManagement {
             return;
         }
 
-        // Sort by salary descending
         records.sort((r1, r2) -> Double.compare(r2.salary, r1.salary));
 
         System.out.println("Employees sorted by salary (descending) from text file:");
@@ -613,7 +565,6 @@ public class EmplyeeManagement {
         }
     }
 
-// Helper class to hold line and salary
     private static class EmployeeSalaryRecord {
 
         String line;
@@ -632,7 +583,6 @@ public class EmplyeeManagement {
             System.out.println("No language entered.");
             return;
         }
-        // Chuẩn hóa: chữ cái đầu viết hoa, còn lại thường
         lang = lang.substring(0, 1).toUpperCase() + lang.substring(1).toLowerCase();
 
         boolean found = false;
@@ -640,9 +590,6 @@ public class EmplyeeManagement {
                 new FileInputStream("src/Employees.txt"), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Giả sử mỗi dòng có dạng: ID, Name, ..., ProgrammingLanguages: Java, C#
-                // Bạn cần xác định vị trí trường programmingLanguages trong dòng
-                // Ví dụ: nếu dòng có "ProgrammingLanguages: Java, C#" thì tách lấy phần sau dấu ':'
                 int idx = line.toLowerCase().indexOf("languages:");
                 if (idx != -1) {
                     String langs = line.substring(idx + "Languages:".length()).trim();
@@ -703,14 +650,12 @@ public class EmplyeeManagement {
             empIDSet.clear();
             teamLeaderMap.clear();
             System.out.println("Data loaded successfully! " + employeeList.size() + " employees loaded.");
-            // In ra thông tin từng nhân viên sau khi load
             for (Employee emp : employeeList) {
                 empIDSet.add(emp.getEmpID());
                 if (emp instanceof TeamLeaderClass) {
                     String team = ((TeamLeaderClass) emp).getTeamName().trim().toLowerCase();
                     teamLeaderMap.put(team, (TeamLeaderClass) emp);
                 }
-                // In ra thông tin
                 if (emp instanceof Salary) {
                     System.out.println(emp.toString() + ", Salary: " + ((Salary) emp).getSalaryForIT());
                 } else {
@@ -742,12 +687,39 @@ public class EmplyeeManagement {
             System.out.println("Employee list is empty.");
             return;
         }
-        System.out.println("Sorting employees by name (ascending)");
-        employeeList.sort(Comparator.comparing(Employee::getEmpName, String.CASE_INSENSITIVE_ORDER));
-        System.out.println("Sorting completed.");
+        System.out.println("Sort employees by:");
+        System.out.println("1. Name (ascending)");
+        System.out.println("2. Salary (descending)");
+        System.out.print("Choose: ");
+        String opt = sc.nextLine().trim();
+        switch (opt) {
+            case "1":
+                employeeList.sort(Comparator.comparing(Employee::getEmpName, String.CASE_INSENSITIVE_ORDER));
+                System.out.println("Sorted by name.");
+                showEmployeeList();
+                break;
+            case "2":
+                sortEmployeeBySalaryDesc();
+                break;
+            default:
+                System.out.println("Invalid sort option.");
+        }
     }
 
-    //Function phụ
+    private static void sortEmployeeBySalaryDesc() {
+        if (employeeList.isEmpty()) {
+            System.out.println("Employee list is empty.");
+            return;
+        }
+        employeeList.sort((e1, e2) -> {
+            double sal1 = (e1 instanceof Salary) ? ((Salary) e1).getSalaryForIT() : 0;
+            double sal2 = (e2 instanceof Salary) ? ((Salary) e2).getSalaryForIT() : 0;
+            return Double.compare(sal2, sal1); // Descending
+        });
+        System.out.println("Employees sorted by salary (descending):");
+        showEmployeeList();
+    }
+
     public static boolean isDuplicateID(String empID) {
         return empIDSet.contains(empID.trim().toLowerCase());
     }
